@@ -17,14 +17,17 @@ class GameInfo:
         self.started = False
         self.level_start_time = 0
 
-    def game_finished(self):
-        return self.level > self.LEVELS
-
     def start_level(self):
         self.started = True
         self.level_start_time = time.time()
 
-    def get_level_time(self):
+    @property
+    def game_finished(self):
+        return self.level > GameInfo.LEVELS
+
+    @property
+    def level_time(self):
         if not self.started:
             return 0
-        return round(time.time() - self.level_start_time)
+        current_time = time.time()
+        return round(current_time - self.level_start_time)

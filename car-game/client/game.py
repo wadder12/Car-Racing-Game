@@ -37,8 +37,6 @@ class Game:
         self.computer_car = ComputerCar(2, 4, PATH)
         self.game_info = GameInfo()
 
-
-
     def draw(self):
         for img, pos in self.images:
             self.win.blit(img, pos)
@@ -46,7 +44,8 @@ class Game:
         level_text = pygame.font.SysFont("comicsans", 44).render(f"Level {self.game_info.level}", 1, (255, 255, 255))
         self.win.blit(level_text, (10, self.height - level_text.get_height() - 70))
 
-        time_text = pygame.font.SysFont("comicsans", 44).render(f"Time: {self.game_info.get_level_time()}s", 1, (255, 255, 255))
+        time_text = pygame.font.SysFont("comicsans", 44).render(f"Time: {self.game_info.level_time}s", 1, (255, 255, 255))
+
         self.win.blit(time_text, (10, self.height - time_text.get_height() - 40))
 
         vel_text = pygame.font.SysFont("comicsans", 44).render(f"Vel: {round(self.player_car.vel, 1)}px/s", 1, (255, 255, 255))
@@ -100,14 +99,19 @@ class Game:
         self.setup()
 
         show_loading_screen(self.win, self.width, self.height)  # Show the loading screen
-        
+        pygame.display.update()  # Update the display to show the loading screen
+
+        # Delay for a short time to allow the loading screen to be visible
+        pygame.time.delay(1000)
+
         run = True
         while run:
             self.clock.tick(60)
             self.draw()
 
             while not self.game_info.started:
-                blit_text_center(self.win, pygame.font.SysFont("comicsans", 44), f"Press any key to start level {self.game_info.level}!")
+                blit_text_center(self.win, pygame.font.SysFont("comicsans", 44),
+                                f"Press any key to start level {self.game_info.level}!")
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -126,7 +130,7 @@ class Game:
             self.computer_car.move()
             self.handle_collision()
 
-            if self.game_info.game_finished():
+            if self.game_info.game_finished:
                 blit_text_center(self.win, pygame.font.SysFont("comicsans", 44), "You won the game!")
                 pygame.time.wait(5000)
                 self.game_info.reset()
